@@ -14,7 +14,10 @@ Telegram message trigger → AI agent → Gemini Chat model → Google Sheet →
 * AI agent
 * Telegram chat trigger
 * Google sheet 
-* Gmail 
+* Gmail
+* API calls
+* JSON
+* OAuth
 
 ## Screenshots
 
