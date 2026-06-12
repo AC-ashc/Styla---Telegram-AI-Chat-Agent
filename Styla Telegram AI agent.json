@@ -1,0 +1,245 @@
+{
+  "name": "Telegram AI agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2dbee5d2-54dd-4ce9-b81c-46d1a2c59831",
+      "name": "Telegram Trigger",
+      "webhookId": "41f7dcc2-3971-45bc-8817-e9edb00c03f3",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ul7piulZL3EKFSF1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "Your name is Styla and you are an AI Customer Support Agent for an online clothing store Tee Bazaar. Use the Google Sheets knowledge base to answer customer questions about FAQs, shipping, returns, refunds, privacy policies, and store information. Provide accurate, concise, and professional responses based only on the available information. Do not make up answers if information is not found. If requested, use the connected Gmail account to email the relevant details to the customer. Maintain a friendly and helpful tone at all times.\n\nEmail Tool : use this tool to send email\n\nFAQ Database - use this tool to answer customers questions\n\nAlways choose the email subject line yourself based on the context of the conversation. Never ask the user to provide the subject. \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "00e618ca-7876-4df3-872d-01238ded907e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        192
+      ],
+      "id": "7105d000-cb35-4271-9908-3891e852c316",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jdtxw2UmVP7GgWpK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1341456903",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "fb94eb70-683c-4ff4-a9b8-18fd225521a5",
+      "name": "Send a text message",
+      "webhookId": "7bb5665f-78ed-41eb-90d2-d9d2b4016db8",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ul7piulZL3EKFSF1",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "1341456903"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        256,
+        208
+      ],
+      "id": "b05d99c6-3b19-4d99-844b-23ba74cf2bf3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to send the emails ",
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        192
+      ],
+      "id": "335f280d-b379-452e-b84d-a844b55261d3",
+      "name": "Send an email tool",
+      "webhookId": "0f8e2c50-6dda-4bdb-b77c-e2a3bc3b9243",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gT74JdJlg74mmtKu",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1IDaayUEjxjVn-iaK9NledwvNk9SHH8suztfSqazyUfM",
+          "mode": "list",
+          "cachedResultName": "Tee Bazaar -FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IDaayUEjxjVn-iaK9NledwvNk9SHH8suztfSqazyUfM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tee Bazaar -FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IDaayUEjxjVn-iaK9NledwvNk9SHH8suztfSqazyUfM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        208
+      ],
+      "id": "f52ff566-b476-4ae8-8798-907b8b2fab06",
+      "name": "Frequently Ask Questions document",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8qiV8rHXxcJ2IBG5",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an email tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Frequently Ask Questions document": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5fef49a6-92ac-4290-a891-bc88923b32c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "608950fade80d22d6c62d832e4d0505b722c98776b45e15159547ebccaf8af11"
+  },
+  "nodeGroups": [],
+  "id": "Pf6UZT3POkyKyPfs",
+  "tags": []
+}
