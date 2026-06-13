@@ -18,6 +18,7 @@ Telegram message trigger → AI agent → Gemini Chat model → Google Sheet →
 * API calls
 * JSON
 * OAuth
+* Webhook
 
 ## Screenshots
 
